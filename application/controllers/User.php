@@ -14,16 +14,16 @@ class User extends CI_Controller {
 	public function index()
 	{
 		$data['isi'] = $this->db->get('user');//membuka tabel user dan mengambil data tiap field dan ditampung di variabel isi
-		$this->load->view('/formviews' , $data);//membuka form index dan memasukkan variabel data
+		$this->load->view('showUser' , $data);//membuka form index dan memasukkan variabel data
 	}
 
 	// Add a new item
 	public function add()
 	{
-		$this->load->view('user');
+		$this->load->view('addUser');
 	}
 
-	public function actionadd()
+	public function actionAdd()
 	{
 		# code...
 		$data = array('username' => $this->input->post('username'),
@@ -33,26 +33,51 @@ class User extends CI_Controller {
 
 		$sukses = $this->db->insert('user' , $data);
 		if($sukses){
-			echo "Selamat, data anda sudah tersimpan";
+			header("Location:../User/index");
 		}else{
 			echo "Data anda belum tersimpan, silahkan coba lagi";
 		}
 	}
 	//Update one item
-	public function update(  )
+	public function update( $id = '' )
 	{
 		$this->db->where('id',$id);
 		$data['isi'] = $this->db->get('user');
 
-		$this->load->view('form/update',$data);
+		$this->load->view('update',$data);
+	}
+
+	//Update Action
+	public function updateAction( $id = '' )
+	{
+		$data=array('username' => $this->input->post('username'),
+					'password' => $this->input->post('password'),
+					 'fullname' => $this->input->post('fullname'),
+					 'level' => $this->input->post('level'));
+
+		$this->db->get('user');
+		$this->db->where('id', $id);
+		$sukses = $this->db->update('user', $data);
+
+		if($sukses){
+			header("Location:../index");
+		}else{
+			echo"Update Failed !";
+		}
 	}
 
 	//Delete one item
-	public function delete()
+	public function delete( $id = '')
 	{
-		$this->db->get('id',$id);
+		$this->db->where('id',$id);
 
-		$this->db->delete('user');
+		$delete = $this->db->delete('user');
+
+		if($delete){
+			header("Location:../index");
+		}else{
+			echo "Delete Failed !";
+		}
 
 	}
 
